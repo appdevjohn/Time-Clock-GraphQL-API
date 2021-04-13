@@ -1,0 +1,4 @@
+/dist
+/node_modules
+firestoreKey.json
+.DS_Store
