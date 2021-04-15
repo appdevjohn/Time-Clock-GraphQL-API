@@ -8,13 +8,6 @@ type AuthData {
     token: String
 }
 
-type UserDataType {
-    id: ID,
-    name: String,
-    timeIn: Date,
-    email: String
-}
-
 type RecordDataType {
     id: ID,
     timeIn: Date,
@@ -26,11 +19,18 @@ type HourTotalsDataType {
     month: Float
 }
 
+type UserDataType {
+    id: ID,
+    name: String,
+    timeIn: Date,
+    email: String,
+    records: [RecordDataType],
+    totalHours: HourTotalsDataType
+}
+
 type RootQuery {
     login(email: String!, password: String!): AuthData
     user(userId: ID!): UserDataType
-    records(userId: ID!): [RecordDataType]
-    userHours(userId: ID!): HourTotalsDataType
 }
 
 type RootMutation {

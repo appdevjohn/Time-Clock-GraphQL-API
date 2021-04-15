@@ -1,9 +1,3 @@
-export interface RecordType {
-    timeIn: Date;
-    timeOut: Date;
-    id: string;
-}
-
 export class Record {
     timeIn: Date;
     timeOut: Date;

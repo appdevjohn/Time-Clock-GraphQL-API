@@ -45,11 +45,3 @@ export const signUp = async ({ email, name, password }: AuthSignUpInput): Promis
         }
     }
 }
-
-export const requestPasswordReset = ({ email }: { email: string }) => {
-    return email;
-}
-
-export const resetPassword = ({ password }: { password: string }) => {
-    return password;
-}

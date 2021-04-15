@@ -1,5 +1,5 @@
 import db from '../util/firestore';
-import { User, UserType } from '../models/user';
+import { User } from '../models/user';
 import { Record } from '../models/record';
 import { HourTotals } from '../models/misc';
 import dateHours from '../util/dateHours';
@@ -17,55 +17,7 @@ export const getUser = async ({ userId }: { userId: string }, { isAuth }: { isAu
     return User.parseDoc(userDoc);
 }
 
-export const getUserRecords = async ({ userId }: { userId: string }, { isAuth }: { isAuth: boolean }): Promise<Record[]> => {
-    if (!isAuth) {
-        throw new Error('Not authenticated');
-    }
-
-    const snapshot = await db.collection('users').doc(userId).collection('records').orderBy('timeIn', 'asc').get();
-
-    const records = snapshot.docs.map(doc => {
-        return Record.parseDoc(doc);
-    });
-    return records;
-}
-
-export const getUserHourTotals = async ({ userId }: { userId: string }, { isAuth }: { isAuth: boolean }): Promise<HourTotals> => {
-    if (!isAuth) {
-        throw new Error('Not authenticated');
-    }
-
-    const date = new Date();  // Will be set to the first day of the week.
-    const firstOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-    date.setDate(date.getDate() - date.getDay());
-
-    const snapshot = await db.collection('users')
-        .doc(userId)
-        .collection('records')
-        .where('timeIn', '>', firstOfMonth)
-        .get();
-
-    const records = snapshot.docs.map(doc => {
-        return Record.parseDoc(doc);
-    });
-
-    let totalHours = 0;
-    let weekHours = 0;
-    records.forEach(r => {
-        const hours = dateHours(r.timeIn, r.timeOut);
-        totalHours += hours;
-        if (r.timeIn.getTime() > date.getTime()) {
-            weekHours += hours;
-        }
-    });
-
-    return {
-        week: weekHours,
-        month: totalHours
-    }
-}
-
-export const setUser = async ({ name, timeIn, id }: UserType, { isAuth }: { isAuth: boolean }): Promise<User> => {
+export const setUser = async ({ name, timeIn, id }: User, { isAuth }: { isAuth: boolean }): Promise<User> => {
     if (!isAuth) {
         throw new Error('Not authenticated');
     }
