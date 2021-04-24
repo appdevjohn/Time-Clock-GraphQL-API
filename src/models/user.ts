@@ -21,7 +21,7 @@ export class User {
     }
 
     getRecords(): Promise<Record[]> {
-        return db.collection('users').doc(this.id).collection('records').get().then(snapshot => {
+        return db.collection('users').doc(this.id).collection('records').orderBy('timeIn', 'asc').get().then(snapshot => {
             return snapshot.docs.map(doc => Record.parseDoc(doc));
         }).catch(() => {
             return [];
