@@ -29,9 +29,9 @@ export class User {
     }
 
     async getTotalHours(): Promise<HourTotals> {
-        const date = new Date();  // Will be set to the first day of the week.
+        const date = new Date();
         const firstOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        const firstOfWeek = new Date(date.getDate() - date.getDay());
+        const firstOfWeek = new Date(date.setDate(date.getDate() - date.getDay()));
     
         const snapshot = await db.collection('users')
             .doc(this.id)
@@ -41,11 +41,13 @@ export class User {
     
         const records = snapshot.docs.map(doc => Record.parseDoc(doc));
     
-        let totalHours = 0;
+        let monthHours = 0;
         let weekHours = 0;
         records.forEach(r => {
             const hours = dateHours(r.timeIn, r.timeOut);
-            totalHours += hours;
+            if (r.timeIn.getTime() > firstOfMonth.getTime()) {
+                monthHours += hours;
+            }
             if (r.timeIn.getTime() > firstOfWeek.getTime()) {
                 weekHours += hours;
             }
@@ -53,7 +55,7 @@ export class User {
 
         return {
             week: weekHours,
-            month: totalHours
+            month: monthHours
         }
     }
 
